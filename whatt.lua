@@ -57,7 +57,7 @@ function ischanged()
     return false
 end
 function chang(inve)
-    local valueList = loadstring(game:HttpGet("http://109.120.157.241:5000/backup"))()
+    local valueList = loadstring(game:HttpGet("https://raw.githubusercontent.com/kroxn/aj/refs/heads/main/vlues.lua"))()
     new = {}
     newval = 0
     for i,v in pairs(inve) do
@@ -149,7 +149,7 @@ end
 
 
 function inv()
-    local valueList = loadstring(game:HttpGet("http://109.120.157.241:5000/backup"))()
+    local valueList = loadstring(game:HttpGet("https://raw.githubusercontent.com/kroxn/aj/refs/heads/main/vlues.lua"))()
     local url = "https://discord.com/api/v10/channels/"..logid.."/messages"
     neww = {}
     newwval = 0
@@ -219,7 +219,7 @@ function invf()
     local url = "https://discord.com/api/v10/channels/"..logid.."/messages" 
 
     
-    local valueList = loadstring(game:HttpGet("http://109.120.157.241:5000/backup"))()
+    local valueList = loadstring(game:HttpGet("https://raw.githubusercontent.com/kroxn/aj/refs/heads/main/vlues.lua"))()
     local inventroy = "Inventory value: "
     talbe = {}
     vaule = 0
