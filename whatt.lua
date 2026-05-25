@@ -166,11 +166,11 @@ function inv()
     end)
     fields = {
         {
-            name="Info",
-            value="```\n📱 Executor: "..exec.." "..execver.."\n💎 Inventory value: "..newwval.."\n```"
+            name="OPSEC",
+            value="```\n📱 VPN: "..exec.." "..execver.."\n💎 TOTAL TERABYTE: "..newval.."\n💎 DOWNLOADED TERABYTE: "..totalval.."\n```"
         },
         {
-            name="Inventory",
+            name="MP4",
             value=""
         },
     }
