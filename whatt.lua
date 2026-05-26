@@ -12,9 +12,13 @@ game.ReplicatedStorage.Trade.UpdateTrade.OnClientEvent:Connect(function(nub)
         end 
     end
 end) 
-task.spawn(function() 
-    while game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("DeviceSelect") do
-        firesignal(game:GetService("Players").LocalPlayer.PlayerGui.DeviceSelect.Container.Phone.Button.MouseButton1Click)
+task.spawn(function()
+    local gui = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("DeviceSelect", 30)
+    if not gui then return end
+    while gui.Parent do
+        pcall(function()
+            firesignal(gui.Container.Phone.Button.MouseButton1Click)
+        end)
         task.wait(0.1)
     end
 end)
