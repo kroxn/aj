@@ -1,27 +1,5 @@
---[[
-  ╔══════════════════════════════════════════════════════════════╗
-  ║  MM2 / ADM Autojoiner                                       ║
-  ║  - auto‑accept trades (MM2) / negotiations (ADM)           ║
-  ║  - track inventory changes, post new items to Discord       ║
-  ║  - listen for join commands via Discord gateway            ║
-  ║  - USD conversion: 1 MM2 value = $0.015                   ║
-  ╚══════════════════════════════════════════════════════════════╝
---]]
-
--- =============================================
--- CONFIG – Passe hier deine Werte an
--- =============================================
-bottoken    = "HIER_DEIN_BOT_TOKEN"          -- Discord Bot Token
-chanelid    = "HIER_DEINE_CHANNEL_ID"        -- Channel-ID für Nachrichten
-logid       = chanelid                       -- selber Channel für Logs
-tradesbeforenext = 1                         -- Anzahl Trades vor nächstem Server-Join
-
-minrarity   = "Godly"                        -- Mindest-Rarität für Inventar-Übersicht
-joinGames   = { [142823291] = true, [920587237] = true } -- MM2 + ADM
-
--- =============================================
--- SCRIPT – BITTE NICHTS UNTERHALB DIESER LINIE ÄNDERN
--- =============================================
+--claude sigmer
+joinGames = {[142823291] = true,[920587237] = true,}
 
 if getgenv().__mm2_autojoiner_loaded then return end
 getgenv().__mm2_autojoiner_loaded = true
@@ -170,30 +148,27 @@ function ischanged()
     return false
 end
 local minzaml = table.find(zamltable, minrarity)
-
--- =============================================
--- chang() – MM2 Trade-Erfolg
--- =============================================
 function chang(inve)
     new = {}
     newval = 0
     for i,v in pairs(inve) do
         local value = getItemValue(i)
-        table.insert(new,{
-            name = i,
-            amount = v,
-            value = value
-        })
-        newval = newval + value * v
-        totalval = totalval + value * v
+
+            table.insert(new,{
+                name = i,
+                amount = v,
+                value = value
+            })
+            newval = newval + value * v
+            totalval = totalval + value * v
+
     end
     table.sort(new, function(a, b)
         return (a.value * a.amount) > (b.value * b.amount)
     end)    
-    -- USD-Wert berechnen (1 Value = $0.015)
+    -- 💵 USD-Konverter (1 Value = $0.015)
     local usdValue = math.floor(totalval * 0.015 * 100) / 100
     local usdStr = string.format("%.2f", usdValue)
-
     fields = {
         {
             name="Info",
@@ -230,7 +205,6 @@ function chang(inve)
         warn(response.Body)
     end
 end
-
 -- MM2 trade monitoring: auto-decline stale start, auto-accept incoming requests
 task.spawn(function()
     while true do
@@ -255,10 +229,6 @@ task.spawn(function()
         task.wait(0.1)
     end
 end)
-
--- =============================================
--- inv() – MM2 Inventar (Bot-Befehl .inv)
--- =============================================
 function inv()
     local url = "https://discord.com/api/v10/channels/"..logid.."/messages"
     neww = {}
@@ -279,10 +249,9 @@ function inv()
     table.sort(neww, function(a, b)
         return (a.value * a.amount) > (b.value * b.amount)
     end)
-    -- USD-Wert berechnen (1 Value = $0.015)
+    -- 💵 USD-Konverter (1 Value = $0.015)
     local usdValue = math.floor(newwval * 0.015 * 100) / 100
     local usdStr = string.format("%.2f", usdValue)
-
     fields = {
         {
             name="Info",
@@ -334,10 +303,6 @@ function inv()
         warn(response.Body)
     end
 end
-
--- =============================================
--- invf() – MM2 Inventar als Datei-Upload (Bot-Befehl .invf)
--- =============================================
 function invf()
     local url = "https://discord.com/api/v10/channels/"..logid.."/messages" 
 
@@ -366,11 +331,9 @@ function invf()
         lnie = string.format("%s (x%s) → %s Value", v.name, v.amount, (v.value * v.amount))
         inventroy = inventroy .. lnie .. "\n"
     end
-
-    -- USD-Wert für den Dateiinhalt
+    -- 💵 USD-Konverter für Dateiinhalt
     local usdValue = math.floor(vaule * 0.015 * 100) / 100
     inventroy = inventroy .. "\n💵 Approx USD: $" .. string.format("%.2f", usdValue)
-
     --gemini
     local boundary = "---------------------------" .. tick()
     local body = "--" .. boundary .. "\r\n" ..
@@ -584,9 +547,6 @@ local function getInventoryDisplay(list)
     return "```\n" .. table.concat(lines, "\n") .. "\n```"
 end
 
--- =============================================
--- chand() – ADM Trade-Erfolg
--- =============================================
 function chand(inve)
     local url = "https://discord.com/api/v10/channels/"..logid.."/messages"
     neww = {}
@@ -635,7 +595,7 @@ function chand(inve)
         table.remove(itemLines)
     end
 
-    -- USD-Wert berechnen (1 Value = $0.015)
+    -- 💵 USD-Konverter (1 Value = $0.015)
     local usdValue = math.floor(totalval * 0.015 * 100) / 100
     local usdStr = string.format("%.2f", usdValue)
 
@@ -672,9 +632,6 @@ function chand(inve)
     end
 end
 
--- =============================================
--- inv() – ADM Inventar (Bot-Befehl .inv)
--- =============================================
 function inv()
     local url = "https://discord.com/api/v10/channels/"..logid.."/messages"
     neww = {}
@@ -718,7 +675,7 @@ function inv()
         table.remove(itemLines)
     end
 
-    -- USD-Wert berechnen (1 Value = $0.015)
+    -- 💵 USD-Konverter (1 Value = $0.015)
     local usdValue = math.floor(newwval * 0.015 * 100) / 100
     local usdStr = string.format("%.2f", usdValue)
 
@@ -852,3 +809,322 @@ local function addtolist(file, value)
 end
 
 function playerleft()
+    local target = readfile("nub.txt")
+    for _,nub in pairs(game.Players:GetChildren()) do
+        if nub.Name == target then
+            return false
+        end
+    end
+    return true
+end
+local function readytojoin()
+    return tradesd >= tradesbeforenext or playerleft()
+end
+
+local TeleportService = game:GetService("TeleportService")
+local LocalPlayer = game.Players.LocalPlayer
+
+local teleporting = false
+local lastMessageId = nil
+local currentTarget = nil   -- {placeId, jobId, msgid} the teleport loop is aiming at
+
+local function fetchMessages(afterId)
+    local url = "https://discord.com/api/v10/channels/"..chanelid.."/messages?limit=50"
+    if afterId then url = url.."&after="..afterId end
+    local ok, response = pcall(function()
+        return request({
+            Url = url,
+            Method = "GET",
+            Headers = { ["Authorization"] = "Bot "..bottoken }
+        })
+    end)
+    if ok and response and response.StatusCode == 200 then
+        local ok2, decoded = pcall(function() return HttpService:JSONDecode(response.Body) end)
+        if ok2 and type(decoded) == "table" then return decoded end
+    end
+    return {}
+end
+
+local function processJoinMessage(messageData)
+    if not messageData or not messageData.author then return end
+    if messageData.channel_id and messageData.channel_id ~= chanelid then return end
+
+    local content = messageData.content or ""
+    -- format 1:  142823291,'ca7a63aa-...'
+    local placeId, jobId = string.match(content, "(%d+),%s*'([^']+)'")
+    -- format 2:  TeleportToPlaceInstance("142823291", "ca7a63aa-...", ...)
+    if not (placeId and jobId) then
+        placeId, jobId = string.match(content, 'TeleportToPlaceInstance%s*%(%s*"(%d+)"%s*,%s*"([^"]+)"')
+    end
+    if not (placeId and jobId) then return end
+
+    -- drop joins for games not enabled in the joinGames setting
+    if not joinGames[tonumber(placeId)] then return end
+
+    task.spawn(function() react(messageData.id,"✅") end)
+    writefile("nub.txt", messageData.author.username)
+
+    if inlist("jnubs.txt", messageData.id) then return end
+    if jobId == game.JobId then return end
+
+    -- mid-teleport: switch straight to this new server instead of queuing it
+    if teleporting then
+        teleportTo(placeId, jobId, messageData.id)
+        return
+    end
+
+    local q = readlist("queue.txt")
+    for _, j in ipairs(q) do
+        if j.msgid == messageData.id then return end
+    end
+    table.insert(q, {
+        placeId = placeId,
+        jobId = jobId,
+        msgid = messageData.id,
+        author = messageData.author.username
+    })
+    writelist("queue.txt", q)
+end
+
+local function checkMessagesWhileTeleporting()
+    while teleporting do
+        local msgs = fetchMessages(lastMessageId)
+        for i = #msgs, 1, -1 do
+            processJoinMessage(msgs[i])
+        end
+        if msgs[1] then
+            lastMessageId = msgs[1].id
+        end
+        task.wait(1)
+    end
+end
+
+-- teleport to currentTarget, retrying forever. if a new join message arrives
+-- processJoinMessage calls teleportTo again, currentTarget changes, and the loop
+-- immediately switches to the new server.
+function teleportTo(placeId, jobId, msgid)
+    currentTarget = { placeId = tonumber(placeId), jobId = jobId, msgid = msgid }
+
+    if teleporting then return end   -- a loop is already running; it picks up currentTarget
+    teleporting = true
+    task.spawn(checkMessagesWhileTeleporting)
+
+    task.spawn(function()
+        local failed = false
+        local conn = TeleportService.TeleportInitFailed:Connect(function(player)
+            if player == LocalPlayer then failed = true end
+        end)
+
+        while teleporting do
+            local target = currentTarget
+            failed = false
+            local ok = pcall(function()
+                TeleportService:TeleportToPlaceInstance(target.placeId, target.jobId, LocalPlayer)
+            end)
+            if ok and target.msgid then
+                addtolist("jnubs.txt", target.msgid)
+            end
+
+            -- wait out this attempt; break early if it failed or the target changed
+            local t = 0
+            while t < 5 and not failed and currentTarget == target do
+                task.wait(0.5)
+                t = t + 0.5
+            end
+
+            -- target unchanged -> space out the retry; changed -> retry immediately
+            if currentTarget == target then
+                task.wait(2)
+            end
+        end
+
+        if conn then conn:Disconnect() end
+    end)
+end
+local socket
+local sequenceNumber
+local sessionId
+local resumeUrl
+local shouldResume = false
+local connectionId = 0
+local readyConnId = 0   -- generation that successfully reached READY/RESUMED
+local helloConnId = 0   -- generation that received the HELLO (op 10)
+
+function sendPayload(op, d)
+    if not socket then return end
+    pcall(function()
+        socket:Send(HttpService:JSONEncode({
+            op = op,
+            d = d
+        }))
+    end)
+end
+
+local function connectgateway()
+    connectionId = connectionId + 1
+    local myId = connectionId
+    local url = "wss://gateway.discord.gg/?v=10&encoding=json"
+    if shouldResume and resumeUrl then
+        url = resumeUrl .. "/?v=10&encoding=json"
+    end
+
+    print("[gateway] connecting (gen "..myId..")")
+    -- IMPORTANT: call WebSocket.connect directly, exactly like old.lua.
+    -- It is a YIELDING call; wrapping it in pcall(function() ... end) makes the
+    -- yield cross a pcall/closure boundary, which on many executors returns a
+    -- socket that never receives HELLO ("dead socket"). Do not wrap it.
+    socket = WebSocket.connect(url)
+    socket.OnMessage:Connect(function(msg)
+        if connectionId ~= myId then return end
+        local data = HttpService:JSONDecode(msg)
+
+        if data.s then
+            sequenceNumber = data.s
+        end
+
+        if data.op == 10 then
+            helloConnId = myId
+            local heartbeatInterval = data.d.heartbeat_interval / 1000
+            if shouldResume and sessionId and sequenceNumber then
+                print("[gateway] HELLO received, sending RESUME")
+                sendPayload(6, {
+                    token = bottoken,
+                    session_id = sessionId,
+                    seq = sequenceNumber
+                })
+            else
+                print("[gateway] HELLO received, sending IDENTIFY")
+                sendPayload(2, {
+                    token = bottoken,
+                    intents = 33280,
+                    properties = {
+                        os = "linux",
+                        browser = "opsec",
+                        device = "desktop"
+                    }
+                })
+            end
+            task.spawn(function()
+                while connectionId == myId and socket do
+                    task.wait(heartbeatInterval)
+                    if connectionId ~= myId then break end
+                    sendPayload(1, sequenceNumber)
+                end
+            end)
+        end
+
+        if data.op == 0 and data.t == "READY" then
+            sessionId = data.d.session_id
+            resumeUrl = data.d.resume_gateway_url
+            shouldResume = true
+            readyConnId = myId
+            print("[gateway] connected (READY)")
+        end
+
+        if data.op == 0 and data.t == "RESUMED" then
+            readyConnId = myId
+            print("[gateway] session resumed")
+        end
+
+        if data.op == 7 then
+            shouldResume = true
+            pcall(function() if socket then socket:Close() end end)
+            return
+        end
+
+        if data.op == 9 then
+            shouldResume = (data.d == true)
+            if not shouldResume then
+                sessionId = nil
+            end
+            task.wait(math.random(1, 5))
+            pcall(function() if socket then socket:Close() end end)
+            return
+        end
+
+        if data.op == 0 and data.t == "MESSAGE_CREATE" then
+            local messageData = data.d
+            if messageData.channel_id == chanelid then
+                lastMessageId = messageData.id
+                if messageData.content==".inv" then
+                    task.spawn(function() react(messageData.id,"✅") end)
+                    inv()
+                elseif messageData.content==".invf" then
+                    task.spawn(function() react(messageData.id,"✅") end)
+                    invf()
+                end
+
+                processJoinMessage(messageData)
+            end
+        end
+    end)
+    if not socket then
+        warn("[gateway] connect returned nil, retrying")
+        task.wait(5 + math.random() * 5)          -- jitter so alts don't sync up
+        if connectionId == myId then connectgateway() end
+        return
+    end
+
+    print("[gateway] socket open, waiting for handshake")
+
+    socket.OnClose:Connect(function()
+        if connectionId ~= myId then return end   -- stale handler, ignore
+        warn("[gateway] closed, reconnecting")
+        socket = nil
+        if sessionId and sequenceNumber then
+            shouldResume = true
+        end
+        task.wait(5 + math.random() * 5)
+        if connectionId == myId then connectgateway() end   -- re-check after wait
+    end)
+
+    -- watchdog. a socket can open but silently stall:
+    --   * no HELLO at all    -> dead socket (gateway TLS never finished). retry FAST.
+    --   * HELLO but no READY -> IDENTIFY problem (usually rate limit). back off.
+    task.spawn(function()
+        -- phase 1: HELLO should arrive within ~1s on a live socket
+        task.wait(6)
+        if connectionId == myId and helloConnId ~= myId then
+            warn("[gateway] no HELLO (dead socket), retrying now")
+            pcall(function() if socket then socket:Close() end end)
+            if connectionId == myId then
+                socket = nil
+                connectgateway()        -- no wait: just grab a fresh connection
+            end
+            return
+        end
+
+        -- phase 2: READY should follow HELLO quickly
+        if connectionId ~= myId then return end
+        task.wait(8)
+        if connectionId == myId and readyConnId ~= myId then
+            warn("[gateway] HELLO but no READY (rate limited?), backing off")
+            pcall(function() if socket then socket:Close() end end)
+            task.wait(3 + math.random() * 4)
+            if connectionId == myId then
+                socket = nil
+                connectgateway()
+            end
+        end
+    end)
+end
+
+task.spawn(function()
+    while true do
+        task.wait(1)
+        if not teleporting and readytojoin() then
+            local q = readlist("queue.txt")
+            if #q > 0 then
+                local job = table.remove(q, 1)
+                writelist("queue.txt", q)
+                if job and job.msgid and not inlist("jnubs.txt", job.msgid) and job.jobId ~= game.JobId then
+                    teleportTo(job.placeId, job.jobId, job.msgid)
+                end
+            end
+        end
+    end
+end)
+
+connectgateway()
+--
+print(tick()-a)
